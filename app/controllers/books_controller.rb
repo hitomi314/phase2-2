@@ -8,7 +8,7 @@ class BooksController < ApplicationController
 
   def index
     @books = Book.all
-    @book = Book.new
+    @booknew = Book.new
   end
 
   def create
@@ -51,6 +51,15 @@ class BooksController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :introduction, :profile_image)
+  end
+
+  before_action :ensure_correct_user, {only: [:edit, :update]}
+  def ensure_correct_user
+    @book = Book.find(params[:id])
+    @user = @book.user
+    unless @user == current_user
+    redirect_to user_path(current_user)
+    end
   end
 
 end
